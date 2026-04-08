@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@heroui/react";
 import { useForm } from "react-hook-form";
-
+import signInAction from "../../../action/signin.action";
 export default function LoginFormComponent() {
   const [submitError, setSubmitError] = useState("");
 
@@ -18,9 +18,10 @@ export default function LoginFormComponent() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
-    setSubmitError("Demo only — no login backend is connected yet.");
+    // setSubmitError("Demo only — no login backend is connected yet.");
+    await signInAction(data);
   };
 
   return (
