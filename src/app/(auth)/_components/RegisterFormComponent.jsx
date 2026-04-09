@@ -2,23 +2,34 @@
 
 import { Button } from "@heroui/react";
 import { useForm } from "react-hook-form";
+import registerAction from "../../../action/register.action";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "../../../schemas/registerSchema";
 
 export default function RegisterFormComponent() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
+    mode: "onTouched",
     defaultValues: {
       name: "",
       email: "",
       password: "",
       birthdate: "",
     },
+    resolver: zodResolver(registerSchema)
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    const result = await registerAction(data);
+    if(result){
+      router.push('/login')
+    }
   };
 
   return (
@@ -38,6 +49,11 @@ export default function RegisterFormComponent() {
           placeholder="Jane Doe"
           className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none ring-lime-400/20 focus:border-lime-400 focus:ring-2"
         />
+        {errors.name && (
+          <p className="mt-1 text-sm font-medium text-red-600">
+            {errors.name.message}
+          </p>
+        )}
       </div>
 
       {/* Email */}
@@ -49,6 +65,11 @@ export default function RegisterFormComponent() {
           placeholder="you@example.com"
           className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none ring-lime-400/20 focus:border-lime-400 focus:ring-2"
         />
+        {errors.email && (
+          <p className="mt-1 text-sm font-medium text-red-600">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       {/* Password */}
@@ -62,6 +83,11 @@ export default function RegisterFormComponent() {
           placeholder="••••••••"
           className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none ring-lime-400/20 focus:border-lime-400 focus:ring-2"
         />
+        {errors.password && (
+          <p className="mt-1 text-sm font-medium text-red-600">
+            {errors.password.message}
+          </p>
+        )}
       </div>
 
       {/* Birthdate */}
@@ -74,6 +100,11 @@ export default function RegisterFormComponent() {
           {...register("birthdate")}
           className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none ring-lime-400/20 focus:border-lime-400 focus:ring-2"
         />
+        {errors.birthdate && (
+          <p className="mt-1 text-sm font-medium text-red-600">
+            {errors.birthdate.message}
+          </p>
+        )}
       </div>
 
       <Button

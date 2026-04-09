@@ -10,7 +10,11 @@ export const loginService = async (data) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(user)
-  })
+  });
+
+  if (!response.ok) {
+    return null; 
+  }
 
   const result = await response.json();
   return result;
