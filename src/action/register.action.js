@@ -13,11 +13,15 @@ async function registerAction(data){
       lastName,
       email: data.email,
       password: data.password,
-      birthDay: data.birthDay
+      birthDate: data.birthDate
     };
 
     const result = await registerService(payload);
-    return result;
+    if (!result) {
+      return { success: false };
+    }
+
+    return { success: true };
   }catch (error) {
     return {
       success: false,

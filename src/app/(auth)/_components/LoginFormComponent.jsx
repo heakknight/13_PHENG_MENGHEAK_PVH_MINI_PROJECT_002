@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import signInAction from "../../../action/signin.action";
-import { loginSchema } from "../../../schemas/loginSchema";
+import { loginSchema } from "../../../schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
