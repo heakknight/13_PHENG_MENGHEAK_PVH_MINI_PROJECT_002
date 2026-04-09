@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@heroui/react";
+import { auth } from "../app/auth";
+import { useSession, signOut } from "next-auth/react";
+import UserLoggedComponent from "./shop/UserLoggedComponent";
 // import { useCart } from "@/store/cartStore";
 
 const centerLinks = [
@@ -54,9 +57,10 @@ function authLinkClass(pathname, path, filled = false) {
     : "rounded-full px-4 py-2 text-sm font-medium text-gray-600 transition hover:text-gray-900 hover:ring-1 hover:ring-gray-200";
 }
 
-export default function NavbarComponent() {
+export default async function NavbarComponent() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const session = await auth();
 //   const { totalQuantity } = useCart();
 
 //   const cartLabel =
@@ -101,12 +105,18 @@ export default function NavbarComponent() {
 
         <div className="z-10 flex items-center gap-2 sm:gap-3">
           <div className="hidden items-center gap-2 sm:flex">
-            <Link href="/login" className={authLinkClass(pathname, "/login", false)}>
-              Log in
-            </Link>
-            <Link href="/register" className={authLinkClass(pathname, "/register", true)}>
-              Register
-            </Link>
+            {!session ? (
+              <>
+                <Link href="/login" className={authLinkClass(pathname, "/login", false)}>
+                  Log in
+                </Link>
+                <Link href="/register" className={authLinkClass(pathname, "/register", true)}>
+                  Register
+                </Link>
+              </>
+            ) : (
+              <UserLoggedComponent />
+            )}
           </div>
           <Link
             href="/cart"
