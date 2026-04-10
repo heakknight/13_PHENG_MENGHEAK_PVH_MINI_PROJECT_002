@@ -4,15 +4,40 @@ import { categories, products } from "../../data/mockData";
 import LandingHeroSectionComponent from "../../components/landing/LandingHeroSectionComponent";
 import LandingBestSellerSectionComponent from "../../components/landing/LandingBestSellerSectionComponent";
 import LandingEssentialComponent from "../../components/landing/LandingEssentialComponent";
+import { getTopSellingProductService } from "../../service/product.service";
 
-const bestSellers = products.slice(0, 4);
 const heroStrip = products.slice(0, 3);
 
-export default function Home() {
+export default async function Home() {
+  const topSellingProducts = await getTopSellingProductService();
+  const rawApiProducts = topSellingProducts?.payload || [];
+
+  const safeTopSellers = rawApiProducts.map((apiItem) => {
+    const isValidUrl =
+      apiItem.imageUrl &&
+      (apiItem.imageUrl.startsWith("http") || apiItem.imageUrl.startsWith("data:"));
+
+    const safeImage = isValidUrl
+      ? apiItem.imageUrl
+      : "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop";
+
+    return {
+      ...apiItem, 
+      id: apiItem.productId,
+      
+      productName: apiItem.name, 
+      
+      image: safeImage,
+      imageUrl: safeImage,
+    };
+  });
+
+  const displaySellers = safeTopSellers.slice(0, 4);
+
   return (
     <div className="bg-[#fafafa]">
       <LandingHeroSectionComponent miniProducts={heroStrip} />
-      <LandingBestSellerSectionComponent items={bestSellers} />
+      <LandingBestSellerSectionComponent items={displaySellers} />
       <LandingEssentialComponent />
 
       <section className="mx-auto w-full max-w-7xl py-16 lg:py-20">
