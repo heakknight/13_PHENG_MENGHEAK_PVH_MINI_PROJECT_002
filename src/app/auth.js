@@ -3,46 +3,44 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
-  providers:[
+  providers: [
     Credentials({
       name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "text"},
-        password: {label: "Password", type: "password"}
-      },
-
-      async authorize(credentials){
+      async authorize(credentials) {
         const response = await loginService(credentials);
-        if(!response){
-          return null;
+        
+        if (response && response.payload) {
+          return response;
         }
-        return response;
-      }
-    })
+        
+        return null;
+      },
+    }),
   ],
-
   secret: process.env.AUTH_SECRET,
-  session: {
-    strategy: "jwt"
-  },
-  pages: {
-    signIn: "/login"
-  },
-
-  callbacks:{
-    async jwt({token,user}){
-      if(user){
-        token.user = user
+  session: { strategy: "jwt" },
+  pages: { signIn: "/login" },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user; 
+        
+        if (user.payload) {
+          token.name = `${user.payload.firstName} ${user.payload.lastName}`;
+          token.lastName = user.payload.lastName;
+        }
       }
       return token;
     },
 
-    async session({session,token}){
-      if(token){
+    async session({ session, token }) {
+      if (token) {
         session.user = {
           ...session.user,
-          id: token.user.id,
-          accessToken: token.user.payload?.token
+          name: token.name,
+          lastName: token.lastName,
+          id: token.user?.payload?.userId,
+          accessToken: token.user?.payload?.token
         };
       }
       return session;
