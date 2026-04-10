@@ -8,8 +8,9 @@ async function signInAction(data) {
     await signIn("credentials", {
       email: data.email,
       password: data.password,
-      redirectTo: "/",
+      redirect: false
     });
+    return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

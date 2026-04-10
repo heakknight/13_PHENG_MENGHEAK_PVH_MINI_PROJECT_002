@@ -7,10 +7,12 @@ import signInAction from "../../../action/signin.action";
 import { loginSchema } from "../../../schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { SuccessToast } from "../../../components/ToastCustomComponent";
 
 export default function LoginFormComponent() {
   const [submitError, setSubmitError] = useState("");
-  const router = useRouter();
+  const router = useRouter(); 
 
   const {
     register,
@@ -28,9 +30,25 @@ export default function LoginFormComponent() {
   const onSubmit = async (data) => {
     setSubmitError("");
     
-    const result = await signInAction(data);
-    if (result?.error) {
-      setSubmitError(result.error);
+    try{
+      const result = await signInAction(data);
+      if (result?.error) {
+        setSubmitError(result.error);
+        toast.error(result.error);
+      } else{
+        toast.custom((t) => (
+          <SuccessToast
+            t={t}
+            message="Login successfully!"
+            description="Welcome to Purelystore, Take your order now!"
+          />
+        ),{duration: 2000})
+        setTimeout(() => {
+          router.push("/");
+        }, 500);
+      }
+    }catch(errors){
+      console.log(errors)
     }
   };
 
