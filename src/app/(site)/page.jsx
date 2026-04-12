@@ -4,41 +4,56 @@ import { categories, products } from "../../data/mockData";
 import LandingHeroSectionComponent from "../../components/landing/LandingHeroSectionComponent";
 import LandingBestSellerSectionComponent from "../../components/landing/LandingBestSellerSectionComponent";
 import LandingEssentialComponent from "../../components/landing/LandingEssentialComponent";
-import { getTopSellingProductService } from "../../service/product.service";
-
-const heroStrip = products.slice(0, 3);
+import { getTopSellingProductService,getAllProductsService,getAllCategoriesService } from "../../service/product.service";
 
 export default async function Home() {
   const topSellingProducts = await getTopSellingProductService();
-  const rawApiProducts = topSellingProducts?.payload || [];
-
-  const safeTopSellers = rawApiProducts.map((apiItem) => {
+  const products = topSellingProducts?.payload || [];
+  
+  const topSellers = products.map((apiItem) => {
     const isValidUrl =
-      apiItem.imageUrl &&
-      (apiItem.imageUrl.startsWith("http") || apiItem.imageUrl.startsWith("data:"));
-
+    apiItem.imageUrl &&
+    (apiItem.imageUrl.startsWith("http") || apiItem.imageUrl.startsWith("data:"));
+    
     const safeImage = isValidUrl
-      ? apiItem.imageUrl
-      : "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop";
-
+    ? apiItem.imageUrl
+    : "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop";
+    
     return {
       ...apiItem, 
       id: apiItem.productId,
-      
       productName: apiItem.name, 
-      
       image: safeImage,
       imageUrl: safeImage,
     };
   });
 
-  const displaySellers = safeTopSellers.slice(0, 4);
+  const allProducts = await getAllProductsService();
+  const rawProducts = allProducts?.payload || [];
+
+  const safeAllProducts = rawProducts.map((apiItem) => {
+    const isValidUrl = apiItem.imageUrl && (apiItem.imageUrl.startsWith("http") || apiItem.imageUrl.startsWith("data:"));
+    const safeImage = isValidUrl ? apiItem.imageUrl : "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop";
+    
+    return {
+      ...apiItem, 
+      id: apiItem.productId,
+      productName: apiItem.name, 
+      image: safeImage,
+      imageUrl: safeImage,
+      categoryId: apiItem.categoryId
+    };
+  });
+  const categoriesResponse = await getAllCategoriesService();
+  const realCategories = categoriesResponse?.payload || [];
+
+  const displaySellers = topSellers.slice(0, 4);
 
   return (
     <div className="bg-[#fafafa]">
-      <LandingHeroSectionComponent miniProducts={heroStrip} />
+      <LandingHeroSectionComponent miniProducts={displaySellers} />
       <LandingBestSellerSectionComponent items={displaySellers} />
-      <LandingEssentialComponent />
+      <LandingEssentialComponent items={safeAllProducts} categories={realCategories}/>
 
       <section className="mx-auto w-full max-w-7xl py-16 lg:py-20">
         <div className="grid gap-4 md:grid-cols-3">

@@ -8,7 +8,7 @@ import { loginSchema } from "../../../schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { SuccessToast } from "../../../components/ToastCustomComponent";
+import { sileo } from "sileo";
 
 export default function LoginFormComponent() {
   const [submitError, setSubmitError] = useState("");
@@ -34,18 +34,17 @@ export default function LoginFormComponent() {
       const result = await signInAction(data);
       if (result?.error) {
         setSubmitError(result.error);
-        toast.error(result.error);
+        sileo.error(result.error);
       } else{
-        toast.custom((t) => (
-          <SuccessToast
-            t={t}
-            message="Login successfully!"
-            description="Welcome to Purelystore, Take your order now!"
-          />
-        ),{duration: 2000})
+        sileo.success({
+          title: "Login Successfully!",
+          description: "Your order products are ready. You have 0 items in your cart.",
+          duration: 4000,
+        });
         setTimeout(() => {
           router.push("/");
-        }, 500);
+          router.refresh();
+        }, 1000);
       }
     }catch(errors){
       console.log(errors)
