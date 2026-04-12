@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { Button } from "@heroui/react";
-import {
-  ESSENTIALS_TABS,
-  filterProductsByEssentialsTab,
-  products,
-} from "../../data/mockData";
+// import {
+//   ESSENTIALS_TABS,
+//   filterProductsByEssentialsTab,
+//   products,
+// } from "../../data/mockData";
 import ProductCardComponent from "../ProductCardComponent";
 
 const PAGE_SIZE = 8;
 
-export default function LandingEssentialsGrid() {
-  const [tab, setTab] = useState("All");
+export default function LandingEssentialsGrid({ items = [], categories = [] }) {
+  const [activeCategoryId, setActiveCategoryId] = useState("ALL");
   const [showAll, setShowAll] = useState(false);
 
-  const filtered = filterProductsByEssentialsTab(products, tab);
+  const filtered = activeCategoryId === "ALL" ? items : items.filter((product) => product.categoryId === activeCategoryId);
   const visible = showAll ? filtered : filtered.slice(0, PAGE_SIZE);
   const canLoadMore = !showAll && filtered.length > PAGE_SIZE;
 
@@ -26,7 +26,7 @@ export default function LandingEssentialsGrid() {
           Our skincare essentials
         </h2>
         <p className="mt-2 max-w-lg text-gray-500">
-          Filter by routine step — same mock catalog, organized for quick discovery.
+          Filter by routine step — driven by real database categories.
         </p>
       </div>
 
@@ -35,15 +35,34 @@ export default function LandingEssentialsGrid() {
         role="tablist"
         aria-label="Product categories"
       >
-        {ESSENTIALS_TABS.map((label) => {
-          const on = tab === label;
+        <Button
+          role="tab"
+          aria-selected={activeCategoryId === "ALL"}
+          onPress={() => {
+            setActiveCategoryId("ALL");
+            setShowAll(false);
+          }}
+          className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
+            activeCategoryId === "ALL"
+              ? "bg-lime-400 text-gray-900 shadow-sm"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+        >
+          All
+        </Button>
+
+        {categories.map((category) => {
+          const catId = category.categoryId || category.id;
+          const catName = category.name || category.categoryName;
+          const on = activeCategoryId === catId;
+
           return (
             <Button
-              key={label}
+              key={catId}
               role="tab"
               aria-selected={on}
               onPress={() => {
-                setTab(label);
+                setActiveCategoryId(catId);
                 setShowAll(false);
               }}
               className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
@@ -52,7 +71,7 @@ export default function LandingEssentialsGrid() {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {label}
+              {catName}
             </Button>
           );
         })}
