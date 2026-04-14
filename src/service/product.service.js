@@ -47,3 +47,66 @@ export const getAllCategoriesService = async () => {
   if (!response.ok) return null;
   return await response.json();
 };
+
+export const getProductByIdService = async (id) => {
+  const session = await auth();
+  const token = session?.user?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.AUTH_API_URL}/products/${id}`, {
+      cache: "no-store",  
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` })
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`Error fetching product ${id}:`, response.status);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Fetch exception in getProductByIdService:", error);
+    return null;
+  }
+};
+
+
+export const patchProductRatingService = async (id, rating) => {
+  const session = await auth();
+  const token = session?.user?.accessToken;
+
+  if (!token) {
+    return { success: false, error: "unauthorized" };
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.AUTH_API_URL}/products/${id}/rating?star=${rating}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 401) {
+      return { success: false, error: "unauthorized" };
+    }
+
+    if (!response.ok) {
+      return { success: false, error: "Failed to update rating" };
+    }
+
+    const data = await response.json();
+    return { success: true, payload: data.payload ?? data };
+
+  } catch (error) {
+    console.error("Fetch exception:", error);
+    return { success: false, error: "Server exception" };
+  }
+};

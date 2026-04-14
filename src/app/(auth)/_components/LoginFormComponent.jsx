@@ -47,7 +47,7 @@ export default function LoginFormComponent() {
         }, 1000);
       }
     }catch(errors){
-      console.log(errors)
+      sileo.error({title:"Erorr on sth!"})
     }
   };
 
@@ -61,7 +61,7 @@ export default function LoginFormComponent() {
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           {submitError}
         </div>
-      )}
+      )}  
 
       <div>
         <label
