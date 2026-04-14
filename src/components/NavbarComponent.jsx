@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@heroui/react";
 import { useSession, signOut } from "next-auth/react";
-import UserLoggedComponent from "./shop/UserLoggedComponent";
+import UserLoggedComponent from "./landing/UserLoggedComponent";
 // import { useCart } from "@/store/cartStore";
 
 const centerLinks = [

@@ -5,6 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { InteractiveStarRating } from "../ProductCardComponent";
 import { Button } from "@heroui/react";
+
+import {useCartStore} from "../cart/cart";
+import { sileo } from "sileo";
 import {
   Heart,
   ShoppingBag,
@@ -23,6 +26,17 @@ export default function ProductDetailsComponent({
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0]);
+
+  const { addToCart } = useCartStore();
+
+  const handleAddToCart = () => {
+   addToCart(product, quantity, selectedColor, selectedSize);
+
+    sileo.success({
+      title: "Added To Cart",
+      description: `${quantity} × ${product.name} — open the cart when you're ready to checkout.`
+    });
+  };
 
   const rating = product?.star ?? 0;
   const image =
@@ -119,7 +133,6 @@ export default function ProductDetailsComponent({
                 )}
               </div>
 
-              {/* Right Arrow */}
               <Link
                 href={nextProduct ? `/products/${nextProduct.productId}` : "#"}
                 className={`p-2 rounded-full border border-gray-200 transition-all ${!nextProduct ? "opacity-30 cursor-not-allowed" : "hover:bg-gray-50"}`}
@@ -228,7 +241,7 @@ export default function ProductDetailsComponent({
                 </button>
               </div>
 
-              <Button className="flex-1 min-w-[150px] h-10 rounded-full bg-blue-950 text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+              <Button onClick={handleAddToCart} className="flex-1 min-w-[150px] h-10 rounded-full bg-blue-950 text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
                 <ShoppingBag size={16} />
                 Add to cart
               </Button>

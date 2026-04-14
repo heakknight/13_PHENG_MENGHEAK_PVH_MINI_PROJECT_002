@@ -7,7 +7,6 @@ import signInAction from "../../../action/signin.action";
 import { loginSchema } from "../../../schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { sileo } from "sileo";
 
 export default function LoginFormComponent() {
@@ -39,7 +38,8 @@ export default function LoginFormComponent() {
         sileo.success({
           title: "Login Successfully!",
           description: "Your order products are ready. You have 0 items in your cart.",
-          duration: 4000,
+          duration: 3000,
+          position: "top-center"
         });
         setTimeout(() => {
           router.push("/");
