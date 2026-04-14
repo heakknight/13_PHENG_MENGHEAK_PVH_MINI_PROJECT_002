@@ -4,23 +4,23 @@ import React from 'react';
 import { useState } from "react";
 import { signOut,useSession } from "next-auth/react";
 
-const UserLoggedComponent = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const {data: session} = useSession();
-  
-  const getLetterName = () => {
-    if (!session?.user) return "U";
+  const UserLoggedComponent = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const {data: session} = useSession();
+    
+    const getLetterName = () => {
+      if (!session?.user) return "U";
 
-    if (session.user.lastName) {
-      return session.user.lastName.charAt(0).toUpperCase();
-    }
+      if (session.user.lastName) {
+        return session.user.lastName.charAt(0).toUpperCase();
+      }
 
-    if (session.user.name) {
-      const parts = session.user.name.split(" ");
-      return parts[parts.length - 1].charAt(0).toUpperCase();
-    }
+      if (session.user.name) {
+        const parts = session.user.name.split(" ");
+        return parts[parts.length - 1].charAt(0).toUpperCase();
+      }
 
-    return "U";
+      return "U";
   };
 
   return (

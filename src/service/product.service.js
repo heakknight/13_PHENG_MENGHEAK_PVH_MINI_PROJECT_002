@@ -110,3 +110,70 @@ export const patchProductRatingService = async (id, rating) => {
     return { success: false, error: "Server exception" };
   }
 };
+
+export const createProductService = async (payload) => {
+  const session = await auth();
+  const token = session?.user?.accessToken;
+  if (!token) return { success: false, error: "unauthorized" };
+
+  try {
+    const response = await fetch(`${process.env.AUTH_API_URL}/products`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (response.status === 401) return { success: false, error: "unauthorized" };
+    if (!response.ok) return { success: false, error: "Failed to create product" };
+    const data = await response.json();
+    return { success: true, payload: data.payload ?? data };
+  } catch (error) {
+    console.error("createProductService error:", error);
+    return { success: false, error: "Server exception" };
+  }
+};
+
+export const updateProductService = async (productId, payload) => {
+  const session = await auth();
+  const token = session?.user?.accessToken;
+  if (!token) return { success: false, error: "unauthorized" };
+
+  try {
+    const response = await fetch(`${process.env.AUTH_API_URL}/products/${productId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (response.status === 401) return { success: false, error: "unauthorized" };
+    if (!response.ok) return { success: false, error: "Failed to update product" };
+    const data = await response.json();
+    return { success: true, payload: data.payload ?? data };
+  } catch (error) {
+    console.error("updateProductService error:", error);
+    return { success: false, error: "Server exception" };
+  }
+};
+
+export const deleteProductService = async (productId) => {
+  const session = await auth();
+  const token = session?.user?.accessToken;
+  if (!token) return { success: false, error: "unauthorized" };
+
+  try {
+    const response = await fetch(`${process.env.AUTH_API_URL}/products/${productId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (response.status === 401) return { success: false, error: "unauthorized" };
+    if (!response.ok) return { success: false, error: "Failed to delete product" };
+    return { success: true };
+  } catch (error) {
+    console.error("deleteProductService error:", error);
+    return { success: false, error: "Server exception" };
+  }
+};

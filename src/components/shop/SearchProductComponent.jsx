@@ -12,7 +12,6 @@ export default function SearchProductComponent({ searchQuery, setSearchQuery }) 
         type="text"
         placeholder="Search product here..."
         className="w-[300px] rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-2 text-sm text-gray-900 
-                   /* 👇 Focus Styles: Keep it Lime, No Black */
                    focus:border-lime-400 
                    focus:ring-1 
                    focus:ring-lime-400 
