@@ -24,10 +24,10 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.user = user; 
-        
         if (user.payload) {
-          token.name = `${user.payload.firstName} ${user.payload.lastName}`;
+          token.firstName = user.payload.firstName; 
           token.lastName = user.payload.lastName;
+          token.name = `${user.payload.firstName} ${user.payload.lastName}`;
         }
       }
       return token;
@@ -37,8 +37,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       if (token) {
         session.user = {
           ...session.user,
-          name: token.name,
+          firstName: token.firstName,
           lastName: token.lastName,
+          name: token.name,
           id: token.user?.payload?.userId,
           accessToken: token.user?.payload?.token
         };
